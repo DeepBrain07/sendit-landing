@@ -13,7 +13,7 @@ export { default as FlexiblePricing } from "./FlexiblePricing.svg";
 export {default as trackPackage} from "./trackPackage.svg";
 export {default as chooseCarrier} from "./chooseCarrier.svg";
 export {default as getMatched} from "./getMatched.svg";
-export {default as postPackage} from "./postpackage.svg";
+export {default as postPackage} from "./postPackage.svg";
 export {default as insurance} from "./insurance.svg";
 export {default as ratings} from "./ratings.svg";
 export {default as verifiedIdentities} from "./verifiedIdentities.svg";

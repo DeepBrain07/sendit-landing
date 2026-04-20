@@ -18,7 +18,7 @@ export {default as insurance} from "./insurance.svg";
 export {default as ratings} from "./ratings.svg";
 export {default as verifiedIdentities} from "./verifiedIdentities.svg";
 export {default as escrowProtection} from "./escrowProtection.svg";
-export {default as builtForTrust} from "./builtForTrust.svg";
+export {default as builtForTrust} from "./BuiltForTrust.svg";
 export {default as sender} from "./sender.svg";
 export {default as carrier} from "./carrier.svg";
 export {default as star} from "./star.svg";

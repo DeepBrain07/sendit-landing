@@ -1,45 +1,76 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useState } from 'react';
-import { Button } from './Button';
+import api from '../api/axios'; 
+import { Icon } from "@iconify/react";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
 interface FormData {
   firstName: string;
   lastName: string;
   email: string;
 }
 
-const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose, }) => {
+const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const modalRef = useRef<HTMLDivElement>(null);
-    const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
   });
+
+  const [loading, setLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // NEW: Reset everything and close
+  const handleFinalClose = () => {
+    setFormData({ firstName: '', lastName: '', email: '' });
+    setIsSuccess(false);
+    setError(null);
+    onClose();
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const payload = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+      };
+
+      const response = await api.post('/landing/waitlist/', payload);
+
+      if (response.status === 201 || response.status === 200) {
+        setIsSuccess(true);
+      }
+    } catch (err: any) {
+      const serverError = err.response?.data;
+      setError(serverError?.email?.[0] || serverError?.detail || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Close on Escape key press
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleFinalClose(); // Changed to reset on Escape
     };
 
     if (isOpen) {
       window.addEventListener('keydown', handleKeyDown);
-      // Prevent scrolling when modal is open
       document.body.style.overflow = 'hidden';
     }
 
@@ -47,12 +78,11 @@ const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose, }) => {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]); // Only depend on isOpen to prevent unnecessary re-binds
 
-  // Handle click outside of the modal content
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      onClose();
+      handleFinalClose(); // Changed to reset on backdrop click
     }
   };
 
@@ -60,16 +90,16 @@ const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose, }) => {
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={handleBackdropClick}
     >
       <div 
         ref={modalRef}
-        className="relative w-full max-w-md bg-[#F5F4DF] rounded-2xl shadow-2xl p-6 transform transition-all animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-md bg-[#F5F4DF] rounded-2xl shadow-2xl p-8 transform transition-all animate-in zoom-in-95 duration-200"
       >
-        {/* Close Icon (Top Right) */}
+        {/* Close Button */}
         <button 
-          onClick={onClose}
+          onClick={handleFinalClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,54 +108,86 @@ const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose, }) => {
         </button>
 
         <div className='flex flex-col text-center items-center justify-center gap-2'>
-            <h2>You're early.</h2>
-            <p className='text-[#333333E5]'>We’re opening SendIt in waves. Join now and be among the first to send packages or earn from trips you’re already making.</p>
-            {/* Form */}
-            <form 
-                onSubmit={handleSubmit} 
-                className="w-full mt-4 space-y-4"
-            >
-                {/* Top Row: First and Last Name */}
+          {isSuccess ? (
+            <div className="py-8 flex flex-col items-center animate-in zoom-in duration-300">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <Icon icon="solar:check-circle-bold" className="text-green-500 text-5xl" />
+              </div>
+              <h2 className="text-2xl font-bold text-[#1E368E]">You're on the list!</h2>
+              <p className="text-[#333333E5] mt-2">
+                Thanks for joining. We'll send an invite to <br/>
+                <strong>{formData.email}</strong> as soon as a spot opens up.
+              </p>
+              <button 
+                onClick={handleFinalClose} 
+                className="mt-6 w-full py-3 bg-[#1E368E] text-white rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all"
+              >
+                Awesome
+              </button>
+            </div>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold">You're early.</h2>
+              <p className='text-[#333333E5]'>
+                We’re opening SendIt in waves. Join now and be among the first to send packages or earn from trips.
+              </p>
+
+              <form onSubmit={handleSubmit} className="w-full mt-6 space-y-4 text-left">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <input
+                  <input
                     type="text"
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
                     placeholder="First name"
-                    className="w-full px-6 py-2 text-gray-700 bg-white border-none rounded-xl shadow-sm focus:ring-1 focus:ring-blue-400 outline-none placeholder:text-gray-300  transition-all"
+                    disabled={loading}
+                    className="w-full px-6 py-3 text-gray-700 bg-white border-none rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 outline-none transition-all disabled:opacity-50"
                     required
-                />
-                <input
+                  />
+                  <input
                     type="text"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
                     placeholder="Last name"
-                    className="w-full px-6 py-2 text-gray-700 bg-white border-none rounded-xl shadow-sm focus:ring-1 focus:ring-blue-400 outline-none placeholder:text-gray-300 transition-all"
+                    disabled={loading}
+                    className="w-full px-6 py-3 text-gray-700 bg-white border-none rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 outline-none transition-all disabled:opacity-50"
                     required
-                />
+                  />
                 </div>
 
-                {/* Bottom Row: Email */}
-                <div className="w-full">
                 <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Email"
-                    className="w-full px-6 py-2 text-gray-700 bg-white border-none rounded-xl shadow-sm focus:ring-1 focus:ring-blue-400 outline-none placeholder:text-gray-300 transition-all"
-                    required
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                  disabled={loading}
+                  className="w-full px-6 py-3 text-gray-700 bg-white border-none rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 outline-none transition-all disabled:opacity-50"
+                  required
                 />
-                </div>
 
-                {/* Optional Submit Button to complete the form utility */}
+                {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+
                 <div className="pt-2 flex flex-col gap-4 items-center justify-center">
-                    <Button onClick={() => handleSubmit} title="Save my spot" className='!text-primaryAlt !w-fit !py-2 border-1 !bg-[#F0F3FE] border-primaryAlt ' />
-                    <p className='text-[#333333]'>By joining, you’ll be first to know when SendIt goes live in your area.</p>
+                  <button 
+                    disabled={loading}
+                    type="submit"
+                    className='flex items-center justify-center gap-2 w-full py-3 px-6 rounded-xl font-bold text-[#1E368E] bg-[#F0F3FE] border border-[#1E368E] hover:bg-white transition-all active:scale-95 disabled:opacity-70'
+                  >
+                    {loading ? (
+                      <Icon icon="line-md:loading-twotone-loop" className="text-2xl" />
+                    ) : (
+                      "Save my spot"
+                    )}
+                  </button>
+                  <p className='text-xs text-[#333333] italic text-center'>
+                    By joining, you’ll be first to know when SendIt goes live in your area.
+                  </p>
                 </div>
-            </form>
+              </form>
+            </>
+          )}
         </div>
       </div>
     </div>,

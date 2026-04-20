@@ -15,7 +15,7 @@ const Header = () => {
         <div className="w-full flex gap-4 bg-primary z-100 justify-between items-center p-2 pt-6 sm:p-4 md:px-8">
             {/* Modal */}
             <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
-            <img src={logo3} alt="sendit" className="w-24 md:w-42"/>
+            <img onClick={() => window.location.reload()} src={logo3} alt="sendit" className="w-24 md:w-42"/>
             <div className="hidden p-2 px-4 pr-2 sm:flex items-center justify-between gap-2 md:gap-4 rounded-full bg-white text-primary">
                 <a href="#perks" className="cursor-pointer hover:text-primaryAlt">Perks</a>
                 <a href="#how" className="cursor-pointer hover:text-primaryAlt">How it works</a>

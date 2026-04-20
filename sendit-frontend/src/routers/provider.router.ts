@@ -1,15 +1,20 @@
-import { createBrowserRouter, redirect } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import LandingPage from "../layouts/LandingPage/LandingPage";
+import NotFound from "../layouts/LandingPage/NotFound";
 
 export const ProviderRoutePaths = {
-  Root: "/", // added root
-  ErrorPage: "*",
-  LandingPage: LandingPage
+  Root: "/",
+  NotFound: "*", // Standard catch-all path
 };
 
 export const ProviderRouter = createBrowserRouter([
   {
     path: ProviderRoutePaths.Root,
     Component: LandingPage,
+  },
+  {
+    // This MUST be the last route in the array
+    path: ProviderRoutePaths.NotFound,
+    Component: NotFound,
   },
 ]);

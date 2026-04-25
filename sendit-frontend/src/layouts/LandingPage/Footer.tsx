@@ -41,7 +41,7 @@ const Footer = () => {
     return (
         <div className="relative flex flex-col justify-center items-center text-center w-full text-white pt-10 bg-[#010413]">
             {/* icons */}
-            <img src={package_} alt="Package" className="absolute w-[20vw] bottom-0 left-20 z-1" />
+            <img src={package_} alt="Package" className="absolute w-[20vw] bottom-0 left-[5vw] z-1" />
             <img src={luggage} alt="luggage" className="absolute w-[20vw] right-0 bottom-0 z-1"/>
             
             <div className="px-4 sm:px-8 flex flex-col gap-4 w-full sm:flex-row justify-between ">
@@ -113,7 +113,7 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
-            <h1 className="!text-[22vw] !font-bold select-none leading-none mt-10">Send<span className="!font-light">ittt</span>.</h1>
+            <h1 className="!text-[25vw] !font-bold select-none leading-none mt-10">Send<span className="!font-light">ittt</span>.</h1>
         </div>
     );
 };

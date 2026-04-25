@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { plane, OptionalInsurance, RealTimeChat, FlexiblePricing, VerifiedCarriers, SecurePayments, SameDayDelivery } from "../../assets/images";
 import { Button } from "../../components/Button";
 import HowItWorks from "./HowItWorks";
@@ -7,6 +7,16 @@ import CustomModal from "../../components/CustomModal";
 
 const Section3 = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [textIndex, setTextIndex] = useState(0);
+    const words = ["faster way", "safer way", "cheaper way"];
+
+    // Cycle through the words
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTextIndex((prev) => (prev + 1) % words.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     // Animation Variants
     const containerVariants = {
@@ -45,16 +55,31 @@ const Section3 = () => {
                         viewport={{ once: true }}
                         src={plane} 
                         alt="plane" 
-                        className="w-20 mb-[-20px] z-[2] ml-18"
+                        className="w-20 mb-[-20px] z-[2] ml-18 sm:ml-12 md:ml-[-40px]"
                     />
                     <motion.h2 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.4 }}
                         viewport={{ once: true }}
-                        className="sm:w-[70%] lg:w-[50%] !font-bold"
+                        className="sm:w-[70%] md:w-full !font-bold flex flex-wrap justify-center items-center gap-x-2"
                     >
-                        A smarter, <span className="text-black px-2 bg-customYellow inline-block transform -rotate-1">faster way</span> to deliver anything.
+                        A smarter, 
+                        <div className="relative inline-flex flex-col h-[1.2em] overflow-hidden">
+                            <AnimatePresence mode="wait">
+                                <motion.span 
+                                    key={words[textIndex]}
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    exit={{ y: -20, opacity: 0 }}
+                                    transition={{ duration: 0.5 }}
+                                    className="text-black px-2 bg-customYellow transform -rotate-1"
+                                >
+                                    {words[textIndex]}
+                                </motion.span>
+                            </AnimatePresence>
+                        </div> 
+                        to deliver anything.
                     </motion.h2>
                 </div>
 
@@ -104,10 +129,10 @@ const Card = ({title, description, icon, variants}: {title: string, description:
     return (
         <motion.div 
             variants={variants}
-            whileHover={{ y: -8, backgroundColor: "rgba(255, 255, 255, 0.05)" }}
+            whileHover={{ y: -8, }}
             className="bg-primary text-white p-6 rounded-2xl w-full sm:w-[280px] lg:w-[300px] flex flex-col gap-3 items-start text-left shadow-lg border border-white/5 transition-colors cursor-default group"
         >
-            <div className="p-2 rounded-lg bg-white/10 group-hover:bg-primary transition-colors duration-300">
+            <div className="p-2 rounded-lg bg-white/10 transition-colors duration-300">
                 <img src={icon} alt={title} className="w-8 h-8 object-contain  transition-all" />
             </div>
             <p className="text-xl !font-extrabold">{title}</p>

@@ -53,8 +53,8 @@ h1 {
 
 h2 {
   font-family: 'Geist', 'Oswald', sans-serif, 'Comfortaa';
-  font-size: 25px;
-  font-weight: 500;
+  font-size: 28px;
+  font-weight: 600;
   letter-spacing: 1px;
   & span {
     font-family: 'Geist', 'Oswald';

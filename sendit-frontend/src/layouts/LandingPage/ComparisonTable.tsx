@@ -36,10 +36,10 @@ const ComparisonTable: React.FC = () => {
             <thead>
               <tr className="border-b-1 border-[#F8F9FA]/30">
                 {/* 1st Column Header (Empty) */}
-                <th className="sticky left-0 bg-primary z-10 w-[30%]  px-6 py-2"></th>
+                <th className="sticky left-0 bg-primary z-10 w-fit sm:w-[30%]  px-6 py-2"></th>
                 
                 {/* 2nd Column Header (Sendit) - Lighter blue background */}
-                <th className="w-[30%] bg-primaryAlt  px-6">
+                <th className="w-fit sm:w-[30%] bg-primaryAlt  px-6">
                   <div className="flex items-center gap-3">
                     {/* Placeholder for Sendit Logo */}
                     <img src={logo} alt="Sendit Logo" className="w-20"/>
@@ -47,8 +47,8 @@ const ComparisonTable: React.FC = () => {
                 </th>
                 
                 {/* 3rd Column Header (Traditional) */}
-                <th className="w-[30%] px-6 py-4 text-xl font-medium tracking-tight">
-                  <p className='!font-bold'>Traditional Couriers</p>
+                <th className="w-fit sm:w-[30%] px-6 py-4 text-xl font-medium tracking-tight">
+                  <p className='!font-bold whitespace-nowrap'>Traditional Couriers</p>
                 </th>
               </tr>
             </thead>
@@ -60,23 +60,23 @@ const ComparisonTable: React.FC = () => {
                   className={`border-b-1 border-[#F8F9FA]/30 ${index % 2 !== 0 ? 'bg-blue-900/20' : ''}`}
                 >
                   {/* 1st Column (Feature Labels) - Fixed/Sticky */}
-                  <th className="sticky left-0 bg-primary z-10 px-6 py-4 font-medium text-lg tracking-tight whitespace-nowrap">
-                    <p>{feature.label}</p>
+                  <th className="w-fit sm:w-[30%] sticky left-0 bg-primary z-10 px-6 py-4 font-medium text-lg tracking-tight whitespace-nowrap">
+                    <p className='whitespace-nowrap'>{feature.label}</p>
                   </th>
                   
                   {/* 2nd Column (Sendit Values) - Highlighted column */}
-                  <td className="bg-primaryAlt px-6 font-normal tracking-tight">
+                  <td className="w-fit sm:w-[30%] bg-primaryAlt px-6 font-normal tracking-tight">
                     <div className="flex items-center gap-2">
                       <div className=' rounded-[50%] bg-primary'>
                         <Icon icon='material-symbols-light:check-rounded' color='white' width={20} />
                       </div>
-                      <p>{feature.senditValue}</p>
+                      <p className='whitespace-nowrap'>{feature.senditValue}</p>
                     </div>
                   </td>
                   
                   {/* 3rd Column (Traditional Values) */}
-                  <td className="px-6 tracking-tight">
-                    <p>{feature.traditionalValue}</p>
+                  <td className="w-fit sm:w-[30%] px-6 tracking-tight">
+                    <p className='whitespace-nowrap'>{feature.traditionalValue}</p>
                   </td>
                 </tr>
               ))}

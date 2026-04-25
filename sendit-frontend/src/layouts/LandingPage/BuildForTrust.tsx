@@ -47,13 +47,13 @@ const BuiltForTrust = () => {
                     viewport={{ once: true, amount: 0.2 }}
                     className="sm:w-[50%] flex flex-col justify-start"
                 >
-                    <motion.h1 variants={itemVariants} className="mb-8 text-customBrown !font-extrabold leading-tight">
+                    <motion.h2 variants={itemVariants} className="mb-8 text-customBrown !font-extrabold leading-tight">
                         Built for trust, from the ground up.
-                    </motion.h1>
+                    </motion.h2>
 
                     {/* Mobile Image */}
                     <div className="sm:hidden gap-6 mb-10 flex flex-col items-center">
-                        <motion.h2 variants={itemVariants} className="text-white !text-lg text-center">
+                        <motion.h2 variants={itemVariants} className="text-white !text-lg text-left sm:text-center">
                             Sending with a stranger shouldn’t feel risky. That’s why SendIt is designed to protect you at every step.
                         </motion.h2>
                         <motion.img 

@@ -57,13 +57,15 @@ const HowItWorks = () => {
                     index={4}
                     scrollYProgress={scrollYProgress}
                 />
-            </div>
-
-            <Button 
+                <Button 
                 onClick={()=>setIsModalOpen(true)} 
                 title="Get Started for Free" 
-                className="!bg-customBrown !w-fit mt-8"
+                className="!bg-customBrown !w-fit mt-[-170px]"
             />
+                
+            </div>
+
+            
             
             {/* Built for Trust */}
             <div className="w-full mt-20">
@@ -93,7 +95,7 @@ const Card = ({
     const y = useTransform(
         scrollYProgress,
         [0, 1],
-        [0, -index * 80] // higher index = more upward movement
+        [0, -index * 100] // higher index = more upward movement
     );
 
     return (
@@ -107,7 +109,7 @@ const Card = ({
             }}
             transition={{ duration: 0.8 }}
             style={{ y, zIndex: index }}
-            className="sticky top-28 bg-customBrown text-white p-4 py-6 rounded-lg w-[300px] flex flex-col gap-2 items-start text-left shadow-2xl"
+            className="sticky top-28 border-1 border-customYellow bg-customBrown text-white p-4 py-6 rounded-lg w-[270px] flex flex-col gap-2 items-start text-left shadow-2xl"
         >
             <h2 className="p-1 px-3 rounded-[50%] bg-customYellow text-customBrown font-bold">
                 {index}

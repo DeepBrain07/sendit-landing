@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import api from '../api/axios'; 
 import { Icon } from "@iconify/react";
+import Confetti from 'react-confetti';
 
 interface ModalProps {
   isOpen: boolean;
@@ -16,6 +17,13 @@ interface FormData {
 
 const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  
+  // Internal state for window size to avoid library hook conflicts
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+  });
+
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -26,7 +34,19 @@ const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // NEW: Reset everything and close
+  // Handle Window Resize for Confetti
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleFinalClose = () => {
     setFormData({ firstName: '', lastName: '', email: '' });
     setIsSuccess(false);
@@ -66,7 +86,7 @@ const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleFinalClose(); // Changed to reset on Escape
+      if (e.key === 'Escape') handleFinalClose();
     };
 
     if (isOpen) {
@@ -78,11 +98,11 @@ const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]); // Only depend on isOpen to prevent unnecessary re-binds
+  }, [isOpen]);
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      handleFinalClose(); // Changed to reset on backdrop click
+      handleFinalClose();
     }
   };
 
@@ -93,6 +113,17 @@ const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={handleBackdropClick}
     >
+      {/* Confetti Overlay */}
+      {isSuccess && (
+        <Confetti
+          width={windowSize.width}
+          height={windowSize.height}
+          numberOfPieces={150}
+          recycle={false}
+          colors={['#1E368E', '#335CF4', '#F5F4DF', '#FFD700']}
+        />
+      )}
+
       <div 
         ref={modalRef}
         className="relative w-full max-w-md bg-[#F5F4DF] rounded-2xl shadow-2xl p-8 transform transition-all animate-in zoom-in-95 duration-200"
@@ -110,19 +141,19 @@ const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         <div className='flex flex-col text-center items-center justify-center gap-2'>
           {isSuccess ? (
             <div className="py-8 flex flex-col items-center animate-in zoom-in duration-300">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                <Icon icon="solar:check-circle-bold" className="text-green-500 text-5xl" />
+              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Icon icon="solar:check-circle-bold" className="text-primary text-5xl" />
               </div>
-              <h2 className="text-2xl font-bold text-[#1E368E]">You're on the list!</h2>
+              <h2 className="text-2xl font-bold text-primary">Welcome to the inner circle!</h2>
               <p className="text-[#333333E5] mt-2">
-                Thanks for joining. We'll send an invite to <br/>
-                <strong>{formData.email}</strong> as soon as a spot opens up.
+                You've successfully secured your spot. We've sent a confirmation to <br/>
+                <strong>{formData.email}</strong>. Stay tuned for your exclusive invite!
               </p>
               <button 
                 onClick={handleFinalClose} 
-                className="mt-6 w-full py-3 bg-[#1E368E] text-white rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all"
+                className="mt-6 w-full py-3 bg-primary text-white rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all"
               >
-                Awesome
+                Awesome, I'll keep an eye out!
               </button>
             </div>
           ) : (

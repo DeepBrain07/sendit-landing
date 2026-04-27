@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { postPackage, getMatched, chooseCarrier, trackPackage } from "../../assets/images"
 import { Button } from "../../components/Button"
 import BuiltForTrust from "./BuildForTrust"
@@ -7,32 +7,63 @@ import CustomModal from "../../components/CustomModal";
 
 const HowItWorks = () => {  
     const [isModalOpen, setIsModalOpen] = useState(false); 
-    
+    const containerRef = useRef(null);
+
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"]
+    });
+
     return (
-        <div className="bg-customYellow w-full rounded-t-[50px] flex flex-col items-center justify-center mt-8 pt-16">
+        <div 
+            ref={containerRef}
+            className="bg-customYellow w-full rounded-t-[50px] flex flex-col items-center justify-center mt-8 pt-16"
+        >
             <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
             
             <div className="flex justify-center items-center">
-                <h1 className="mb-[-100vh] text-customBrown !text-[50px] sm:!text-[80px] lg:!text-[180px]">HOW IT WORKS</h1>
+                <h1 className="mb-[-100vh] text-customBrown !text-[50px] sm:!text-[80px] lg:!text-[180px]">
+                    HOW IT WORKS
+                </h1>
             </div>
 
-            {/* Container for staggered children */}
-            <div className="hidden sm:flex flex-col justify-center items-center gap-6 mt-8">
-                <Card title="Post Your Package" description="Enter details, destination, and your price." icon={postPackage} index={1}/>
-                <Card title="Get Matched or Receive Bids" description="Travelers going your way can accept or make an offer." icon={getMatched} index={2}/>
-                <Card title="Choose Your Carrier" description="Pick the best option based on price, rating, or timing." icon={chooseCarrier} index={3}/>
-                <Card title="Track & Receive" description="Follow your package in real time and confirm delivery." icon={trackPackage} index={4}/>
+            {/* Main Cards Container */}
+            <div className="flex flex-col justify-center items-center gap-6 mt-8">
+                <Card 
+                    title="Post Your Package" 
+                    description="Enter details, destination, and your price." 
+                    icon={postPackage} 
+                    index={1}
+                    scrollYProgress={scrollYProgress}
+                />
+                <Card 
+                    title="Get Matched or Receive Bids" 
+                    description="Travelers going your way can accept or make an offer." 
+                    icon={getMatched} 
+                    index={2}
+                    scrollYProgress={scrollYProgress}
+                />
+                <Card 
+                    title="Choose Your Carrier" 
+                    description="Pick the best option based on price, rating, or timing." 
+                    icon={chooseCarrier} 
+                    index={3}
+                    scrollYProgress={scrollYProgress}
+                />
+                <Card 
+                    title="Track & Receive" 
+                    description="Follow your package in real time and confirm delivery." 
+                    icon={trackPackage} 
+                    index={4}
+                    scrollYProgress={scrollYProgress}
+                />
             </div>
 
-            {/* Mobile Cards */}
-            <div className=" flex sm:hidden flex-col justify-center items-center gap-6 mt-8">
-                <MobileCard title="Post Your Package" description="Enter details, destination, and your price." icon={postPackage} index={1}/>
-                <MobileCard title="Get Matched or Receive Bids" description="Travelers going your way can accept or make an offer." icon={getMatched} index={2}/>
-                <MobileCard title="Choose Your Carrier" description="Pick the best option based on price, rating, or timing." icon={chooseCarrier} index={3}/>
-                <MobileCard title="Track & Receive" description="Follow your package in real time and confirm delivery." icon={trackPackage} index={4}/>
-            </div>
-
-            <Button onClick={()=>setIsModalOpen(true)} title="Get Started for Free" className="!bg-customBrown !w-fit mt-8"/>
+            <Button 
+                onClick={()=>setIsModalOpen(true)} 
+                title="Get Started for Free" 
+                className="!bg-customBrown !w-fit mt-8"
+            />
             
             {/* Built for Trust */}
             <div className="w-full mt-20">
@@ -42,82 +73,53 @@ const HowItWorks = () => {
     )
 }
 
-const Card = ({title, description, icon, index}: {title: string, description: string, icon: string, index: number}) => {
-    // Determine if it should come from left or right based on index
+const Card = ({
+    title, 
+    description, 
+    icon, 
+    index,
+    scrollYProgress
+}: {
+    title: string, 
+    description: string, 
+    icon: string, 
+    index: number,
+    scrollYProgress: any
+}) => {
+
     const isEven = index % 2 === 0;
-    const margins: Record<number, string> = {
-        1: "-50vw",
-        2: "-15vw",
-        3: "15vw",
-        4: "50vw"
-    };
+
+    // Each card moves at a different rate → creates overlap
+    const y = useTransform(
+        scrollYProgress,
+        [0, 1],
+        [0, -index * 80] // higher index = more upward movement
+    );
+
     return (
-        
         <motion.div 
-            // Entrance Animation
-            initial={{ opacity: 0, x: isEven ? 100 : -100 }}
+            initial={{ opacity: 0, x: isEven ? 200 : -200 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ 
-                duration: 0.6, 
-                delay: index > 1 ? index * 1.2 : 0, 
-                ease: "easeOut" 
+            viewport={{ 
+                once: true,
+                amount: 0.3,
+                margin: "0px 0px -50px 0px"
             }}
-            // Stacking Effect
-            className="sticky top-24 border-1 border-customYellow bg-customBrown text-white p-4 py-6 rounded-[30px] w-[270px]  flex flex-col gap-2 items-start text-left shadow-2xl"
-            
-            style={{ 
-                // Slight scale down for cards further down the stack
-                marginTop: index > 1 ? `-${4 * 85}px` : "0px",
-                marginLeft: margins[index] || "0px",
-                rotate: index === 4 || index === 1 ? `0deg` : "5deg",
-                zIndex: index 
-            }}
+            transition={{ duration: 0.8 }}
+            style={{ y, zIndex: index }}
+            className="sticky top-28 bg-customBrown text-white p-4 py-6 rounded-lg w-[300px] flex flex-col gap-2 items-start text-left shadow-2xl"
         >
-            <h2 className="p-1 px-3 rounded-[50%] bg-customYellow text-customBrown font-bold">{index}</h2>
+            <h2 className="p-1 px-3 rounded-[50%] bg-customYellow text-customBrown font-bold">
+                {index}
+            </h2>
+
             <div className="w-full flex justify-center">
                 <img src={icon} alt={title} className="w-40"/>
             </div>
+
             <div>
                 <h2 className="font-bold text-lg">{title}</h2>
-                <p className="!font-extralight opacity-90">{description}</p>
-            </div>
-        </motion.div>
-    )
-}
-
-const MobileCard = ({title, description, icon, index}: {title: string, description: string, icon: string, index: number}) => {
-    // Determine if it should come from left or right based on index
-    const isEven = index % 2 === 0;
-
-    return (
-        
-        <motion.div 
-            // Entrance Animation
-            initial={{ opacity: 0, x: isEven ? 100 : -100 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ 
-                duration: 0.6, 
-                delay: index > 1 ? index * 1.2 : 0, 
-                ease: "easeOut" 
-            }}
-            // Stacking Effect
-            className="sticky top-24 border-1 border-customYellow bg-customBrown text-white p-4 py-6 rounded-[30px] w-[270px]  flex flex-col gap-2 items-start text-left shadow-2xl"
-            
-            style={{ 
-                // Slight scale down for cards further down the stack
-                marginTop: index > 1 ? `-${4 * 55}px` : "0px",
-                zIndex: index 
-            }}
-        >
-            <h2 className="p-1 px-3 rounded-[50%] bg-customYellow text-customBrown font-bold">{index}</h2>
-            <div className="w-full flex justify-center">
-                <img src={icon} alt={title} className="w-40"/>
-            </div>
-            <div>
-                <h2 className="font-bold text-lg">{title}</h2>
-                <p className="!font-extralight opacity-90">{description}</p>
+                <p className="!font-extralight opacity-80">{description}</p>
             </div>
         </motion.div>
     )

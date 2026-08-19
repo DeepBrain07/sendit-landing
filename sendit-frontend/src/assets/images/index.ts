@@ -27,3 +27,4 @@ export {default as cloudLarge} from "./cloudLarge.svg";
 export {default as package} from "./package.svg";
 export {default as luggage} from "./luggage.svg";
 export {default as hourglass} from "./hourglass.svg";
+export {default as OG} from "./OG.png";

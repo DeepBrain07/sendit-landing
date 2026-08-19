@@ -70,17 +70,23 @@ export const LaunchCountdown: React.FC<LaunchCountdownProps> = ({
       </h1>
 
       {/* Countdown Timer Cards */}
-      <div className="grid grid-cols-4 text-black gap-3 w-full mb-10 ">
+      <div className="grid grid-cols-4 text-black gap-3 w-full mb-10">
         {timerUnits.map((unit, index) => (
           <div key={index} className="flex flex-col items-center">
-            <div className="relative w-full aspect-square rounded-2xl bg-gradient-to-b from-[#0A32B3] via-[#1D4ED8] to-[#60A5FA] p-0.5 shadow-md overflow-hidden flex items-center justify-center">
+            <div
+              style={{
+                background:
+                  "linear-gradient(180deg, #0929A0 48.21%, #6483F7 50%)",
+              }}
+              className="relative w-full aspect-square rounded-2xl p-0.5 shadow-md overflow-hidden flex items-center justify-center"
+            >
               {/* Glossy top overlay */}
               <div className="absolute top-0 inset-x-0 h-1/2 bg-white/10 rounded-t-2xl pointer-events-none" />
               <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight drop-shadow-sm">
                 {unit.value}
               </span>
             </div>
-            <span className="mt-2 text-xs sm:text-sm !font-normal tracking-wider ">
+            <span className="mt-2 text-xs sm:text-sm !font-normal tracking-wider">
               {unit.label}
             </span>
           </div>

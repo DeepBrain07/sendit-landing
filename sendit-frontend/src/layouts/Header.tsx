@@ -62,7 +62,7 @@ const Header = () => {
             <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
             
             {/* Top Announcement Banner */}
-            <div className="w-full bg-black text-white text-center py-2.5 px-4 text-xs sm:text-sm font-medium flex flex-col items-center justify-center gap-0.5 pointer-events-auto">
+            <div className="w-full  bg-black text-white text-center py-2.5 px-4 text-xs sm:text-sm font-medium flex items-center justify-center gap-1 flex-wrap pointer-events-auto">
                 <p className="text-gray-200">
                     🚀 We're almost here. Launching <span className="font-bold text-white">September 21.</span>
                 </p>

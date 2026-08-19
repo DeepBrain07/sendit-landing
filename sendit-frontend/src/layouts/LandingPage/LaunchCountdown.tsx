@@ -1,7 +1,5 @@
-import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState, useEffect } from "react";
 import { hourglass } from "../../assets/images";
-import api from "../../api/axios";
 import CustomModal from "../../components/CustomModal";
 
 interface TimeLeft {
@@ -13,18 +11,12 @@ interface TimeLeft {
 
 interface LaunchCountdownProps {
   targetDate?: Date | string;
-  onJoinWaitlist?: (email: string) => void;
 }
 
 export const LaunchCountdown: React.FC<LaunchCountdownProps> = ({
   // Set launch date to September 21st, 2026 at 00:00:00
   targetDate = new Date("2026-09-21T00:00:00"),
-  onJoinWaitlist,
 }) => {
-  const [email, setEmail] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const calculateTimeLeft = (): TimeLeft => {
@@ -49,36 +41,6 @@ export const LaunchCountdown: React.FC<LaunchCountdownProps> = ({
 
     return () => clearInterval(timer);
   }, [targetDate]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const payload = { email };
-
-      const response = await api.post("/landing/waitlist/", payload);
-
-      if (response.status === 201 || response.status === 200) {
-        setIsSuccess(true);
-        if (onJoinWaitlist) {
-          onJoinWaitlist(email);
-        }
-      }
-    } catch (err: any) {
-      const serverError = err.response?.data;
-      setError(
-        serverError?.email?.[0] ||
-          serverError?.detail ||
-          "Something went wrong. Please try again."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const formatNumber = (num: number): string => {
     return num < 10 ? `0${num}` : `${num}`;
@@ -131,28 +93,14 @@ export const LaunchCountdown: React.FC<LaunchCountdownProps> = ({
       </p>
 
       {/* Waitlist Form & States */}
-      {isSuccess ? (
-        <div className="w-full py-3.5 px-6 bg-white/80 rounded-full text-center border border-gray-200 animate-in zoom-in-95 duration-200">
-          <p className="text-sm font-semibold text-[#1D4ED8]">
-            🎉 You're on the waitlist!
-          </p>
-        </div>
-      ) : (
-        <div className="w-full flex flex-col gap-2">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-[#2563EB] to-[#1E40AF] text-white text-sm font-semibold shadow-md hover:opacity-95 active:scale-95 transition-all flex items-center justify-center"
-          >
-            Join Waitlist
-          </button>
-
-          {error && (
-            <p className="text-red-500 text-xs text-center font-medium px-2">
-              {error}
-            </p>
-          )}
-        </div>
-      )}
+      <div className="w-full flex flex-col gap-2">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-[#2563EB] to-[#1E40AF] text-white text-sm font-semibold shadow-md hover:opacity-95 active:scale-95 transition-all flex items-center justify-center"
+        >
+          Join Waitlist
+        </button>
+      </div>
 
       <CustomModal
         isOpen={isModalOpen}

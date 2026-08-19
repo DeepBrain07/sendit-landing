@@ -92,7 +92,7 @@ const Card = ({
     const isEven = index % 2 === 0;
 
     // Each card moves at a different rate → creates overlap
-    const y = useTransform(
+    let y = useTransform(
         scrollYProgress,
         [0, 1],
         [0, -index * 100] // higher index = more upward movement

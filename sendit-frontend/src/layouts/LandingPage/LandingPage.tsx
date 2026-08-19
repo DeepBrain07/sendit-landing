@@ -9,6 +9,7 @@ import Footer from "./Footer";
 import CustomModal from "../../components/CustomModal";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import LaunchCountdown from "./LaunchCountdown";
 
 const LandingPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,7 +46,7 @@ const LandingPage = () => {
             <div className="!overflow-hidden relative ">
                 
                 {/* Content */}
-                <div className=" mt-20 sm:mt-40  p-4 sm:p-8 py-12 text-center  sm:text-left text-white">
+                <div className=" mt-30 sm:mt-50  p-4 sm:p-8 py-12 text-center  sm:text-left text-white">
                     <div className="sm:w-[70%] md:w-[70%]">
                         <h1 className="!leading-tight">
                             Send packages faster with travelers already going your way
@@ -77,10 +78,10 @@ const LandingPage = () => {
                 
             </div>
             {/* Other sections */}
-            <div className="z-2 mt-[10vh] sm:mt-[12vw]">
+            <div className="z-2 mt-[10vh] sm:mt-[12vw] ">
                 
                 {/* Section 2 - Staggered Reading Animation */}
-                <div className="text-center flex justify-center items-center p-4 sm:p-8 sm:px-20 !py-16 bg-[#F5F4DF]">
+                <div className="text-center flex flex-col justify-center items-center p-4 sm:p-8 sm:px-20 !py-16 bg-[#F5F4DF]">
                     <motion.h2 
                         variants={container}
                         initial="hidden"
@@ -98,6 +99,8 @@ const LandingPage = () => {
                             </motion.span>
                         ))}
                     </motion.h2>
+
+                    <LaunchCountdown/>
                 </div>
 
                 {/* Section 3 */}
